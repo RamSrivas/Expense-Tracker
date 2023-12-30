@@ -1,0 +1,16 @@
+.home__container{
+    display: grid;
+    grid-template-columns: 1fr 5fr;
+}
+.home__page{
+    grid-column: 2,3;
+}
+.home__navbar{
+    grid-column: 1,2;
+    display: flex;
+
+}
+.home__navbar_content{
+    display: flex;
+    flex-direction: column;
+}

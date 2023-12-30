@@ -1,0 +1,14 @@
+				Expense tracker
+
+Mandatory feature needed:
+
+	> User could add, delete and edit.
+	> Expenses should be of Daily, Weekly, Monthly.
+	> Their should be an Monthly Budget plus warning should be shown on exceeding.
+	> User could also get the summary of the Expense in PDF format.
+
+Extra feature I want to add in:
+	> Dark and light mode toggle.
+	> Multiple Currency support.
+	> Visual representation of Expense.
+	> Debit, Credit and Lendings would also be managed
