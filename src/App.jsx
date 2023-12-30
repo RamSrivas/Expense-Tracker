@@ -10,6 +10,10 @@ function App() {
     <Routes>
       <Route path='/' element={<Login />} />
       <Route path="/Home" element={<Home/>} />
+      <Route path='/Transaction' />
+      <Route path='/Categories' />
+      <Route path='/Report' />
+      <Route path='/Settings' />
     </Routes>
     </BrowserRouter>
     </>

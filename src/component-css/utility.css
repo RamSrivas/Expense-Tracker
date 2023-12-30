@@ -7,3 +7,26 @@
     width: 4rem;
     border: 1px solid grey;
 }
+.grid{
+    display: grid;
+}
+.flex{
+    display: flex;
+}
+.flex_d-col{
+    flex-direction: column;
+}
+.jc_center{
+    justify-content: center;
+}
+.ai_center{
+    align-items: center;
+}
+
+.br-2{
+    border-radius: 2rem;
+}
+
+.bs{
+    box-shadow: 0 5px 10px rgba(00, 00, 0, 0.3) ;
+}

@@ -1,16 +1,57 @@
-.home__container{
-    display: grid;
-    grid-template-columns: 1fr 5fr;
-}
 .home__page{
     grid-column: 2,3;
 }
-.home__navbar{
-    grid-column: 1,2;
-    display: flex;
-
+.page{
+    width: 100%;
+    height: 100vh;
 }
-.home__navbar_content{
-    display: flex;
-    flex-direction: column;
+.home__h1{
+    font-size:rem ;
+}
+.home__page__container{
+    width: 95%;
+    height: 95vh;
+    
+}
+.home__page_inner_container{
+    width: 95%;
+    height: 95%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 3fr;
+    gap: .75rem;
+}
+
+.home__para{
+    text-align: center;
+    font-size: 2rem;
+}
+.incomebox{
+   width: 35%; 
+}
+.incomebox1{
+    width: 65%; 
+    margin:0.35rem 0 ;
+    color: white;
+ }
+ .income{
+    background-color: #136f63;
+ }
+ .expense{
+    background-color: #f34213;
+}
+.expense .incomebox1{
+    color: black;
+}
+.balance{
+    background-color: #3e2f5b;
+ }
+ .incomebox1 p{
+    font-size: 2.4rem ;
+ }
+ .pie_graph{
+    width: 100%;
+ }
+.line_graph{
+    grid-area: 3/ 2/ 4/ 4;
 }
