@@ -9,7 +9,7 @@ const Login = () => {
     const change = (event) => {
     setname(event.target.value);}
 
-    const   click = async() =>{
+    const   click = () =>{
     navigate('/Home', {replace:true , state:{names}});}
 
     return(
@@ -18,11 +18,14 @@ const Login = () => {
             <div className="container">
                 <h1 className='login__h1' >Welcome to Your <span className='login__span' >Expense Tracker</span></h1>
                 <div className="line"></div>
-                <h3>Hello, Whats your name?</h3>
+                <h3 className='h3'>Whats your name ?</h3>
                 <input type="text" onChange={change} placeholder='Your Name' value={names}/>
 
                 <div className='button'>
-                    <button className='btn' onClick={click}>Submit</button>
+                    <button className='btn' onClick={click}>
+                        <div className='colorbtn'><p className='p'>Submit</p></div>
+                        Submit
+                        </button>
                 </div>
             </div>
         </div>

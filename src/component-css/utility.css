@@ -22,11 +22,25 @@
 .ai_center{
     align-items: center;
 }
-
+.spacebtw{
+    justify-content: space-between;
+}
 .br-2{
     border-radius: 2rem;
 }
 
+.br-4{
+    border-radius: 4rem;
+}
+.br-50{
+    border-radius: 50%;
+}
 .bs{
     box-shadow: 0 5px 10px rgba(00, 00, 0, 0.3) ;
+}
+.bs_white{
+    box-shadow: 5px 5px 13px  rgba(218, 223, 255, 0.3) ;
+}
+.hide{
+    display: none;
 }
