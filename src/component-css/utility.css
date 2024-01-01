@@ -22,8 +22,20 @@
 .ai_center{
     align-items: center;
 }
+.spaceeve{
+    justify-content: space-evenly;
+}
 .spacebtw{
     justify-content: space-between;
+}
+.spaceard{
+    justify-content: space-around;
+}
+.margin_1-0{
+    margin: 1rem 0;
+}
+.fs12{
+    font-size: 1.6rem;
 }
 .br-2{
     border-radius: 2rem;

@@ -56,43 +56,66 @@ input[type=text]:focus {
   border-radius: 1rem;
 }
 
-.button{
-  display: flex;
-  justify-content: center;
+.cursor {
+  width: 18px;
+  height:18px;
+  border:3px solid white;
+  border-radius:50%;
+  position: absolute;
+  box-shadow: 2px -3px 41px -1px rgba(250,250,250,0.64);
+  pointer-events: none;
+  transition: all 0.02s linear ;
+  z-index: 9999;
+  mix-blend-mode: difference;
+  background: white;
 }
 
-.btn{
-  padding: 0.2rem 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 0.25rem;
-  background-color: #fff;
-  font-weight: 600;
+
+.wrapper{
   position: relative;
-  color: #fff;
-  cursor: url(/public/white_circle.svg) , auto;
+  top: 30px;
+  left: 23rem;
+  transform: translate(-50%, -50%);
 }
-.btn .p{
-  color: white;
-  margin: 2px 8px;
-  
+
+.a{
+  display: block;
+  width: 200px;
+  height: 40px;
+  line-height: 40px;
+  font-size: 18px;
+  font-family: sans-serif;
+  text-decoration: none;
+  color: #333;
+  border: 2px solid #333;
+  letter-spacing: 2px;
+  text-align: center;
+  position: relative;
+  transition: all .35s;
 }
-.btn:hover .p {
-  color: black;
-  margin: 2px 8px;
-  transition: color 0.1s ease-in-out;
+
+.a span{
+  position: relative;
+  z-index: 2;
 }
-.colorbtn{
-  width: 100%;
-  color: #fff;
-  height: calc(100% + 0rem);
-  background-color: black;
+
+.a:after{
   position: absolute;
-  border-radius: 0.25rem;
-  top:0;
-  left:0;
-  transition: all 1s ease-in-out;
+  content: "";
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  border-radius: 4rem;
+  background: #101010;
+  transition: width .35s;
 }
-.btn:hover .colorbtn {
-  width: 0%;
-  transition: all 0.4s ease-in-out;
+
+.a:hover{
+  color: #fff;
+}
+
+.a:hover:after{
+  width: 100%;
+  transition: width .35s;
 }

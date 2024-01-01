@@ -11,21 +11,36 @@ const Login = () => {
 
     const   click = () =>{
     navigate('/Home', {replace:true , state:{names}});}
+    let curs = document.querySelector('.cursor');
+
+    document.addEventListener('mousemove', (e) => {
+      let x = e.pageX;
+      let y = e.pageY;
+      curs.style.left = (x - 10) + "px";
+      curs.style.top = (y - 10) + "px";
+    });
+    document.addEventListener('mouseleave', (e) => {
+        let x = e.pageX;
+        let y = e.pageY;
+        curs.style.left = (x - 10) + "px";
+        curs.style.top = (y - 10) + "px";
+      });
 
     return(
     <>
+        <div className="cursor"></div>
         <div className="startpage">
             <div className="container">
                 <h1 className='login__h1' >Welcome to Your <span className='login__span' >Expense Tracker</span></h1>
                 <div className="line"></div>
                 <h3 className='h3'>Whats your name ?</h3>
                 <input type="text" onChange={change} placeholder='Your Name' value={names}/>
-
-                <div className='button'>
-                    <button className='btn' onClick={click}>
-                        <div className='colorbtn'><p className='p'>Submit</p></div>
-                        Submit
-                        </button>
+                <div>
+                <div className='subbtn' >
+                <div className='wrapper'>
+                    <a className='a br-4' onClick={click} href="/Home"><span>Submit</span></a>
+                </div>
+                </div>
                 </div>
             </div>
         </div>
