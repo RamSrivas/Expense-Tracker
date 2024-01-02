@@ -1,6 +1,6 @@
 import '../component-css/login.css';
 import '../component-css/utility.css'
-import { useState } from 'react';
+import { useState ,useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 const Login = () => {
     const[names,setname]=useState('');
@@ -11,24 +11,31 @@ const Login = () => {
 
     const   click = () =>{
     navigate('/Home', {replace:true , state:{names}});}
-    let curs = document.querySelector('.cursor');
 
-    document.addEventListener('mousemove', (e) => {
-      let x = e.pageX;
-      let y = e.pageY;
-      curs.style.left = (x - 10) + "px";
-      curs.style.top = (y - 10) + "px";
-    });
-    document.addEventListener('mouseleave', (e) => {
-        let x = e.pageX;
-        let y = e.pageY;
-        curs.style.left = (x - 10) + "px";
-        curs.style.top = (y - 10) + "px";
-      });
+    const [position, setPosition] = useState({ x: 0, y: 0 });
+    
+    const handleMouseMove = (e) => {
+        const x = e.pageX;
+        const y = e.pageY;
+        setPosition({ x: x - 10, y: y - 10 });
+    };
+    
+    useEffect(() => {
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseleave', handleMouseMove);
+    
+        return () => {
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseleave', handleMouseMove);
+        };
+    }, []);
 
     return(
     <>
-        <div className="cursor"></div>
+        <div className="cursor" style={{
+        left: position.x + 'px',
+        top: position.y + 'px',
+      }}></div>
         <div className="startpage">
             <div className="container">
                 <h1 className='login__h1' >Welcome to Your <span className='login__span' >Expense Tracker</span></h1>
