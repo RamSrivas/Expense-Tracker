@@ -5,6 +5,8 @@ import Home from  './component/home';
 import Analyse from './component/analyse'
 import Transaction from './component/transaction'
 import Monthlybudget from './component/monthlybudget';
+
+
 function App() {
   return (
     <>

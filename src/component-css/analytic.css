@@ -1,9 +1,12 @@
-
+ 
 .Ana_page_tile{
     color: #abe761;
     background-color: #2e2e2e;
-    padding: 0.5rem 1.4rem;
+    padding: 0.7rem 1.4rem;
 
+  }
+  .view_date p{
+    color: grey;
   }
   .spacer{
     width: 20%;
@@ -12,7 +15,99 @@
     margin-bottom: 1.2rem;
 
   }
+  .header_btn {
+    font-size: 14px;
+    background: transparent;
+    border: none;
+    padding: 1em 1.5em;
+    color: #ffedd3;
+    text-transform: uppercase;
+    position: relative;
+    transition: 0.5s ease;
+    cursor: pointer;
+  }
+  
+  .header_btn::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 2px;
+    width: 0;
+    background-color: #ffc506;
+    transition: 0.5s ease;
+  }
+  
+  
+  .header_btn:hover {
+    color: #c9c9ca;
+    transition-delay: 0.5s;
+  }
+  
+  .header_btn:hover::before {
+    width: 100%;
+  }
+  
+  .header_btn::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 0;
+    width: 100%;
+    background-color: #ffc506;
+    transition: 0.4s ease;
+    z-index: -1;
+  }
+  
+  .header_btn:hover::after {
+    height: 10%;
+    transition-delay: 0.4s;
+    color: aliceblue;
+  }
+.button {
+  margin: 0;
+  height: auto;
+  background: transparent;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+}
 
+.button {
+  --border-right: 6px;
+  --text-stroke-color: rgba(255,255,255,0.6);
+  --animation-color: #37FF8B;
+  --fs-size: 1.2rem;
+  letter-spacing: 3px;
+  text-decoration: none;
+  font-size: var(--fs-size);
+  font-family: "Arial";
+  position: relative;
+  text-transform: uppercase;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--text-stroke-color);
+}
+.hover-text {
+  position: absolute;
+  box-sizing: border-box;
+  content: attr(data-text);
+  color: var(--animation-color);
+  width: 0%;
+  inset: 0;
+  border-right: var(--border-right) solid var(--animation-color);
+  overflow: hidden;
+  transition: 0.5s;
+  -webkit-text-stroke: 1px var(--animation-color);
+}
+.button:hover .hover-text {
+  width: 100%;
+  filter: drop-shadow(0 0 23px var(--animation-color))
+}
+.payment_mode h2{
+  font-size: 2rem;
+  margin-right: 50px;
+}
   .Anaspagebox{
     margin: 10vh 20vw;
     width: 60vw;
@@ -60,4 +155,8 @@
     width: 35%;
     border-radius: 0.75rem;
     background-color: rgb(232, 232, 232);
+  }
+
+  .stats{
+    height: 240px;
   }

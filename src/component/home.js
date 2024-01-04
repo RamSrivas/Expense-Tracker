@@ -5,6 +5,9 @@ import React, { useState ,Component , useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import "react-datepicker/dist/react-datepicker.css";
 let totexp=0;
+let max_exp=0;
+let max_inc=0;
+
 let tran_type=0
 let tran_amount=0
 let tran_octype=0
@@ -455,7 +458,6 @@ const Home = () => {
                 </div>
                 <div className="flex ai_center">
                     <button className="header_buttons" onClick={showa}>Analyse</button>
-                    <button className="header_buttons">Summary PDF</button>
                     <button className="header_buttons" onClick={showMB}>{text} Budget</button>
                 </div>
             </section>
@@ -646,7 +648,7 @@ const Home = () => {
                     </div>
                     <div className="tran_snote margin_1-0 fs12 flex ai_center spaceeve">
                         <p className='tran_p'>Note:</p>
-                        <input className='octype note_des'enterednote type="text" onChange={noteChangeHandler} placeholder='Description'/>
+                        <input className='octype note_des' type="text" onChange={noteChangeHandler} placeholder='Description'/>
                     </div>
                     <div className="flex ai_center jc_center savebtn">
                     <button className="glow-on-hover" type='submit'>Save</button>

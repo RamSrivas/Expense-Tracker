@@ -1,21 +1,44 @@
 import React from 'react';
-import { useState,useEffect} from 'react';
+import { useRef,useState,useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import {useLocation } from 'react-router-dom';
 import '../component-css/analytic.css';
 import { Chart } from "react-google-charts";
 import '../component-css/utility.css';
+import html2canvas from "html2canvas";
+import { jsPDF } from "jspdf";
 
 const Analyse=() =>{
   const location = useLocation();
+  const navigate = useNavigate();
+  
   const Expenses=location.state.Expenses;
   const mb_amt=location.state.mb_amt;
   const names=location.state.names;
 
-    const navigate = useNavigate();
-    function click(){
-      navigate('/Home' , {state:{names,Expenses,mb_amt}} );
-    }
+  const pdfRef = useRef(undefined);
+   
+  const [buttonText, setButtonText] = useState('Generate PDF');
+
+  const handlePdf =  () => {
+     setButtonText('Generating PDF...');
+     const pdf = new jsPDF('portrait', 'pt', 'a4');
+     const data = html2canvas(pdfRef.current);
+     const img = data.toData('image/png');
+     const imgProperties = pdf.getImageProperties(img);
+     const pdfWidth = pdf.internal.pageSize.getWidth();
+     const pdfHeight = (imgProperties.height * pdfWidth) / imgProperties.width;
+     pdf.addImage(img, 'PNG', 0, 0, pdfWidth, pdfHeight);
+     pdf.save('Expenses.pdf');
+ 
+     setButtonText('Generate PDF');
+  }
+
+
+
+  function click(){
+    navigate('/Home' , {state:{names,Expenses,mb_amt}} );
+  }
   let count=0;
   let totalno=0;
   let totalincome=0;
@@ -86,8 +109,7 @@ const Analyse=() =>{
   
     const options = {
     title: "Category-wise Expense",
-    backgroundColor: "#494949",
-    color:"white"
+    backgroundColor: "#ffff",
     };
   
   
@@ -523,8 +545,10 @@ const Analyse=() =>{
         but_fory();
         but_bacy();
     };
-
-
+    
+    let maxExpense=0
+    let maxIncome=0
+    
     const newExpenses = []
     Expenses.forEach((Expenses) =>{
       if (showWeek) {
@@ -550,13 +574,15 @@ const Analyse=() =>{
     })  
     for(var i =0;i<newExpenses.length;i++){
       if(newExpenses[i].tran_type=="Expense"){
-          totalexpense+=newExpenses[i].tran_amount
-          count+=1;
-          
-          if(newExpenses[i].categories=="Groceries"){
-            Groceries+=newExpenses[i].tran_amount
-          }
-          if(newExpenses[i].categories=="Entertainment"){
+        totalexpense+=newExpenses[i].tran_amount
+        count+=1;
+        if(newExpenses[i].tran_amount>maxExpense)
+        { maxExpense=newExpenses[i].tran_amount}
+        
+        if(newExpenses[i].categories=="Groceries"){
+          Groceries+=newExpenses[i].tran_amount
+        }
+        if(newExpenses[i].categories=="Entertainment"){
             Entertainment+=newExpenses[i].tran_amount
           }
           if(newExpenses[i].categories=="Travel"){
@@ -591,6 +617,8 @@ const Analyse=() =>{
       else{
         totalincome+=newExpenses[i].tran_amount;
         counti++;
+        if(newExpenses[i].tran_amount>maxIncome)
+        { maxIncome=newExpenses[i].tran_amount}
       }totalno=counti+count;
       }
       let data = [
@@ -608,10 +636,13 @@ const Analyse=() =>{
     <div>
 
       <section >
-        <div className="Anaspagebox br-2">
+        <div className="Anaspagebox br-2" >
             <div className="flex spaceard ai_center Anatitle br-2">
-            <button className="glow-on-hover margin_1-0" onClick={click} >Back</button>
-            <div className="spacer"></div>
+            <button className="button" data-text="Awesome" onClick={click}>
+                <span className="actual-text"  >&nbsp;back&nbsp;</span>
+                <span aria-hidden="true" className="hover-text">&nbsp;back&nbsp;</span>
+            </button>
+            <button className="header_btn" onClick={handlePdf} >{buttonText}</button>
             <div className="Ana_page_tile br-2">
             <p>Summary</p>
             </div>
@@ -622,6 +653,11 @@ const Analyse=() =>{
                 <a className='Ana_tab' onClick={selmonth} >Month</a>
                 <a className='Ana_tab' onClick={selyear}  >Year</a>
             </div>
+          <div id='pdf' ref={pdfRef}> 
+
+
+
+
             <div id="week" className={`${showWeek ? '': 'hide'}`}>
               <div className=''>
                 <div className="flex spacebtw view_date">
@@ -636,8 +672,10 @@ const Analyse=() =>{
                     width={"100%"}
                     height={"400px"}/>
                 </div>
-                <div className="payment_mode ">
-                  <h2>Payment Modes:</h2>
+                <div className="payment_mode flex flex_d-col">
+                  <div className="flex jc_center">
+                  <h2>Payment Modes</h2>
+                  </div>
                   <div className='flex spaceard'>
                   <div>
                   <div className="pmcontent"><p>Cash: ₹{cash} </p></div>
@@ -657,12 +695,16 @@ const Analyse=() =>{
                     <h2>Expense Stats</h2>
                     <p>Per day Expense: {Math.round((totalexpense/7) * 100) / 100}</p>
                     <p>Average Expense: {Math.round((totalexpense/count) * 100) / 100}</p>
+                    <p>Total Expense: {totalexpense}</p>
+                    <p>Max Value Spend :{maxExpense}</p>
                   </div>
                   <div className="space"></div>
                   <div className="avg_income flex flex_d-col spaceard">
                     <h2>Income Stats</h2>
                     <p>Per day Income: {Math.round((totalincome/7) * 100) / 100}</p>
                     <p>Average Income: {Math.round((totalincome/counti) * 100) / 100}</p>
+                    <p>Total Income:{totalincome}</p>
+                    <p>Max Value Spend :{totalincome}</p>
                   </div>
                 </div>
               </div>
@@ -702,6 +744,8 @@ const Analyse=() =>{
                     <h2>Expense Stats</h2>
                     <p>Per day Expense: {Math.round((totalexpense/countd) * 100) / 100}</p>
                     <p>Average Expense: {Math.round((totalexpense/count) * 100) / 100}</p>
+                    <p>Total Expense: {totalexpense}</p>
+                    <p>Max Value Spend :{maxExpense}</p>
                   </div>
                   <div className="space"></div>
                   <div className="avg_income flex flex_d-col spaceard">
@@ -747,17 +791,22 @@ const Analyse=() =>{
                     <h2>Expense Stats</h2>
                     <p>Per day Expense: {Math.round((totalexpense/county) * 100) / 100}</p>
                     <p>Average Expense: {Math.round((totalexpense/count) * 100) / 100}</p>
+                    <p>Total Expense: {totalexpense}</p>
+                    <p>Max Value Spend :{maxExpense}</p>
                   </div>
                   <div className="space"></div>
                   <div className="avg_income flex flex_d-col spaceard">
                     <h2>Income Stats</h2>
                     <p>Per day Income: {Math.round((totalincome/county) * 100) / 100}</p>
                     <p>Average Income: {Math.round((totalincome/counti) * 100) / 100}</p>
+                    <p>Total Expense: {totalexpense}</p>
+                    <p>Max Value Spend :{maxExpense}</p>
                   </div>
                 </div>
               </div>
               </div>
             </div>
+                    </div>
       </section>
     </div>
   )

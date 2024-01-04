@@ -37,7 +37,8 @@ body{
 }
 .box{
     font-size: 1.2rem;
-    padding: 1rem 0rem; 
+    padding: 1rem 0rem;
+    width: auto; 
 
 }
 .box_content_border{
