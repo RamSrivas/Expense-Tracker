@@ -1,0 +1,109 @@
+
+.tra_page_tile{
+    color: #abe761;
+    background-color: #2e2e2e;
+    padding: 0.5rem 1.4rem;
+
+  }
+  .spacer{
+    width: 20%;
+  }
+  .tratitle{
+    margin-bottom: 1.2rem;
+
+  }
+
+  .traspagebox{
+    margin: 10vh 5vw;
+    width: 90vw;
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 1.6rem;
+    background-color: #121212;
+    backdrop-filter: blur(0px);
+    padding-bottom: 4rem;
+  }
+  .tra_tab{
+    text-decoration: none;
+    margin: 0.3rem 0.4rem;
+    color: grey;
+    z-index: 5;
+  }
+  .tra_am_inp{
+    width: 20%;
+    height: 30px;
+}
+  .selectedtra{
+    position: absolute;
+    top: 0px;
+    left: 66%;
+    z-index: 3;
+    height: 100%;
+    width: 35%;
+    border-radius: 0.75rem;
+    background-color: rgb(232, 232, 232);
+  }
+  .tra_type{
+    position: relative;
+      margin: 0.2rem 6rem;
+      padding: 0.2rem 0rem;
+      border-radius: 0.75rem;
+      background-color: rgb(68, 68, 68);
+  }
+  .selectedtra{
+    position: absolute;
+    top: 0px;
+    left: 66%;
+    z-index: 3;
+    height: 100%;
+    width: 35%;
+    border-radius: 0.75rem;
+    background-color: rgb(232, 232, 232);
+  }
+.helo{
+  grid-template-columns: 4fr 5fr 4fr 4fr 3fr;
+}
+.gapping{
+  margin: 2rem 0;
+}
+.view_date{
+  margin: 1.2rem 0;
+}
+.payment_mode{
+  padding: 2rem 0;
+  background-color: #2b1919;
+  border-radius: 0.75rem;
+  margin: 0.3rem 0;
+}
+.payment_mode h2{
+  color: #7f7f7f;
+}
+.pmcontent{
+  margin-top: 1rem
+}
+.btn{
+  width: 20%;
+}
+
+.stats{
+  padding: 2rem 0;
+  background-color: #505050;
+  border-radius: 0.75rem;
+  margin: 0.5rem 0;
+
+}
+.avg_income{
+  border-radius: 0.75rem;
+  background-color: #2f462e;
+  padding:0 4rem;
+  
+}
+.space{
+  padding: 5rem 0;
+}
+.avg_expense{
+  border-radius: 0.75rem;
+  background-color:#5a2831 ;
+  padding:0 4rem;
+}

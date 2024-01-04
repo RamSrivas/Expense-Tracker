@@ -1,0 +1,12 @@
+.MBtitle{
+    color: #d66478;
+    background-color: #2e2e2e;
+    padding: 0.4rem 0.8rem;
+}
+.MBpagebox{
+    font-size: 1.8rem;
+    height: 50vh;
+    width: 80vw;
+    margin: 25vh 10vw;
+    background-color: rgb(60, 60, 60);
+}

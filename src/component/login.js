@@ -5,12 +5,12 @@ import { useNavigate } from 'react-router-dom';
 const Login = () => {
     const[names,setname]=useState('');
     const navigate = useNavigate();
-
+    const Expenses=[{},{},{},{},{}];
     const change = (event) => {
     setname(event.target.value);}
 
     const   click = () =>{
-    navigate('/Home', {replace:true , state:{names}});}
+    navigate('/Home', {state:{names,Expenses}});}
 
     const [position, setPosition] = useState({ x: 0, y: 0 });
     

@@ -103,9 +103,8 @@ body{
 }
 .expense{
     background-color: #d66478;
-    color: white;
+    color: rgb(255, 255, 255);
 }
-
 .income{
     background-color: #4b714a;
     color: white;
@@ -125,7 +124,10 @@ h3{
     font-size: 1.3rem;
 }
 
-
+.ocno{
+    border: 2px solid white !important;
+    border-radius: .75rem;
+}
 .section3{
     padding: 2rem 4rem;
 }
@@ -345,65 +347,6 @@ h3{
     width: 100%;
 }
 
-.Ana_page_tile{
-    color: #abe761;
-    background-color: #2e2e2e;
-    padding: 0.5rem 1.4rem;
-
-  }
-  .spacer{
-    width: 20%;
-  }
-  .Anatitle{
-    margin-bottom: 1.2rem;
-
-  }
-
-  .Anaspagebox{
-    margin: 10vh 20vw;
-    width: 60vw;
-    position: absolute;
-    top: 0;
-    left: 0;
+.budget{
     font-size: 1.6rem;
-    background-color: #121212;
-    backdrop-filter: blur(0px);
-    padding-bottom: 4rem;
-  }
-  .Ana_tab{
-    text-decoration: none;
-    margin: 0.3rem 0.4rem;
-    color: grey;
-    z-index: 5;
-  }
-  .Ana_am_inp{
-    width: 20%;
-    height: 30px;
 }
-  .selectedana{
-    position: absolute;
-    top: 0px;
-    left: 66%;
-    z-index: 3;
-    height: 100%;
-    width: 35%;
-    border-radius: 0.75rem;
-    background-color: rgb(232, 232, 232);
-  }
-  .Ana_type{
-    position: relative;
-      margin: 0.2rem 6rem;
-      padding: 0.2rem 0rem;
-      border-radius: 0.75rem;
-      background-color: rgb(68, 68, 68);
-  }
-  .selectedana{
-    position: absolute;
-    top: 0px;
-    left: 66%;
-    z-index: 3;
-    height: 100%;
-    width: 35%;
-    border-radius: 0.75rem;
-    background-color: rgb(232, 232, 232);
-  }
