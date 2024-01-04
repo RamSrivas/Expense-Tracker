@@ -9,7 +9,7 @@ let tran_type=0
 let tran_amount=0
 let tran_octype=0
 let tran_ocno=0
-let tran_date=0
+let tran_date=0 
 let tran_paytype= 0
 let categories=0
 let note=0
@@ -21,8 +21,6 @@ const Home = () => {
     const names=location.state.names;
     const [mb_amt,setmb_amt]=useState(location.state.mb_amt);
     const navigate=useNavigate();
-    
-    console.log(mb_amt)
     const [position, setPosition] = useState({ x: 0, y: 0 });  
     const [enteredtype, setEnteredtype]= useState('')
     const [enteredAmount, setEnteredAmount]= useState('')
@@ -68,7 +66,6 @@ const Home = () => {
             tran_paytype: tran_paytype,
             categories: categories,
             note:note}; 
-            console.log(tran_amount,tran_date,tran_ocno,tran_paytype)
     setExpense((preExpences) => {
         return [expenseData, ...preExpences]})
     }
@@ -367,20 +364,19 @@ const Home = () => {
     const [isVisiblecati, setIsVisiblecati] = useState(false);
     const [isVisiblecate, setIsVisiblecate] = useState(false);
     const [isVisibleMB,setIsVisibleMB]=useState(true)
+    let left=mb_amt-totexp;
+    const leftper=(totexp/mb_amt)*100;
     useEffect(() => {
-        if(mb_amt!=undefined || mb_amt!=0){
+        if(mb_amt != undefined && parseInt(mb_amt,10) != 0){
             setIsVisibleMB(false);
             settext("Edit")
         }
-        else if(mb_amt===undefined || mb_amt===0){
+        else if(mb_amt === undefined || parseInt(mb_amt,10) === 0){
             setIsVisibleMB(true);
             settext("Add")}     
-        },[mb_amt]);
+        },[left]);
 
         
-        let left=mb_amt-totexp;
-        const leftper=(totexp/mb_amt)*100;
-        console.log(leftper)
     const showMB = () => {
         navigate('/Home/Monthlybudget' , {state:{names,Expenses,mb_amt}} )
     }
@@ -444,7 +440,6 @@ const Home = () => {
         typeChangeHandler('Expense')
         hidec();
     };
-
     function color(x){
         if (Expenses[x].tran_type === "Income") return "#81C784";  //green
         else return "#FF9F63"   ;//red
@@ -551,10 +546,12 @@ const Home = () => {
                 <div className='budget flex jc_center ai_center'>
                     <div className='no-budget-box flex jc_center br-2' >
                         <div className={`${isVisibleMB ? '' : 'hide'}`}>
+                            <div className="flex jc_center">
                             <div className="flex flex_d-col ai_center no-budget">
                                 <h2>NO Budgets Set!!</h2>
                                 <br />
                                 <h3>Set up a budget to help you stay in track with ur expense</h3>
+                            </div>
                             </div>
                         </div>
                         <div className={`${!(isVisibleMB) ? '' : 'hide'}`}>
