@@ -1,9 +1,13 @@
  
+
 .Ana_page_tile{
     color: #abe761;
     background-color: #2e2e2e;
     padding: 0.7rem 1.4rem;
 
+  }
+  .heloo{
+    color: grey;
   }
   .view_date p{
     color: grey;
@@ -107,6 +111,9 @@
 .payment_mode h2{
   font-size: 2rem;
   margin-right: 50px;
+}
+.ol{
+  color:grey;
 }
   .Anaspagebox{
     margin: 10vh 20vw;

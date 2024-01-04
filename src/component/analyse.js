@@ -20,18 +20,27 @@ const Analyse=() =>{
    
   const [buttonText, setButtonText] = useState('Generate PDF');
 
-  const handlePdf =  () => {
-     setButtonText('Generating PDF...');
-     const pdf = new jsPDF('portrait', 'pt', 'a4');
-     const data = html2canvas(pdfRef.current);
-     const img = data.toData('image/png');
-     const imgProperties = pdf.getImageProperties(img);
-     const pdfWidth = pdf.internal.pageSize.getWidth();
-     const pdfHeight = (imgProperties.height * pdfWidth) / imgProperties.width;
-     pdf.addImage(img, 'PNG', 0, 0, pdfWidth, pdfHeight);
-     pdf.save('Expenses.pdf');
- 
-     setButtonText('Generate PDF');
+  const handlePdf =  async() => {
+    setButtonText('Generating PDF...');
+    const pdf = new jsPDF('portrait', 'pt', 'a4');
+    const data = await html2canvas(pdfRef.current);
+    const img = data.toDataURL('image/png');
+    const pageHeight = 842;
+    const imgProperties = pdf.getImageProperties(img);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProperties.height * pdfWidth) / imgProperties.width;
+    let heightLeft = pdfHeight;
+    let position = 0;
+    heightLeft -= pageHeight;
+    pdf.addImage(img, 'PNG', 0, 0, pdfWidth, pdfHeight);
+    while (heightLeft >= 0) {
+      position = heightLeft - pdfHeight;
+      pdf.addPage();
+      pdf.addImage(img, 'PNG', 0, position, pdfWidth, pdfHeight);
+      heightLeft -= pageHeight;
+    }
+    pdf.save('Expenses.pdf');
+    setButtonText('Generate PDF');
   }
 
 
@@ -102,6 +111,34 @@ const Analyse=() =>{
   let lagXy=xy
   let lagYy=yy;
 
+  function resetw() {
+    lagMX=month;
+    lagMY=month;
+     lagYearX=year;
+     lagYearY=year;
+     lagX=Monday_date;
+     lagY=parseInt(MMonday_date,10)+6;
+  }
+  function resetm() {
+    lagMXm=month;
+    lagMYm=month;
+    lagYearXm=year;
+    lagYearYm=year;
+    lagXm=Monday_date
+    lagYm=parseInt(MMonday_date,10)+6;
+  }
+  function resety() {
+    lagMXy=month;
+    lagMYy=month;
+    lagYearXy=year;
+    lagYearYy=year;
+    lagXy=Monday_date;
+    lagYy=parseInt(MMonday_date,10)+6;
+  }
+
+
+
+
   let countd=31;
   let county=366;
 
@@ -114,8 +151,8 @@ const Analyse=() =>{
   
   
     function forward (){
-      lagX = parseInt(x,10)+7;
-      lagY=parseInt(y,10)+7;
+      lagX+=7;
+      lagY+=7;
       if(lagMX===1 || lagMX===3 ||lagMX===5 ||lagMX===7 ||lagMX===8 ||lagMX===10 ||lagMX===12)
       {
         if(lagX>31){
@@ -526,6 +563,8 @@ const Analyse=() =>{
         setshowWeek(true);
         setshowmonth(false);
         setshowyear(false);
+        resetw();
+        set();
         but_forw();
         but_bacw();
       };
@@ -534,6 +573,8 @@ const Analyse=() =>{
         setshowWeek(false);
         setshowmonth(true);
         setshowyear(false);
+        resetm()
+        setm()
         but_form()
         but_bacm()
     };
@@ -542,6 +583,8 @@ const Analyse=() =>{
         setshowWeek(false);
         setshowmonth(false);
         setshowyear(true);
+        resety();
+        setyyy();
         but_fory();
         but_bacy();
     };
@@ -635,7 +678,7 @@ const Analyse=() =>{
   return (
     <div>
 
-      <section >
+      <section  >
         <div className="Anaspagebox br-2" >
             <div className="flex spaceard ai_center Anatitle br-2">
             <button className="button" data-text="Awesome" onClick={click}>
@@ -670,9 +713,9 @@ const Analyse=() =>{
                     data={data}
                     options={options}
                     width={"100%"}
-                    height={"400px"}/>
+                    height={"300px"}/>
                 </div>
-                <div className="payment_mode flex flex_d-col">
+                <div className="payment_mode">
                   <div className="flex jc_center">
                   <h2>Payment Modes</h2>
                   </div>
@@ -689,7 +732,7 @@ const Analyse=() =>{
                   </div>
                 
                 </div>
-                  <h2>Total Number of Transaction: {totalno}</h2>
+                  <h1 className='ol'>Total Number of Transaction: {totalno}</h1>
                 <div className="stats flex spaceard">
                   <div className="avg_expense flex flex_d-col spaceard">
                     <h2>Expense Stats</h2>
@@ -707,6 +750,21 @@ const Analyse=() =>{
                     <p>Max Value Spend :{totalincome}</p>
                   </div>
                 </div>
+                <div className="alltransactions">
+                <div className='grid heloo helo gapping'>
+                    <div className='transac_type'>Transaction-Type</div>
+                    <div className="transac_paymode">Payment-Mode</div>
+                    <div className="transac_transactionamount">Amount(₹)</div>
+                    <div className="transac_category">Categories</div>
+                    <div className="transac_transactiondate">Date</div>
+                </div>
+                {newExpenses.map((newExpenses) =><div className='grid heloo helo' >
+                    <div className='transac_type'style={{color:newExpenses.tran_type === "Income" ? "#81C784" : "#FF9F63"}}>{newExpenses.tran_type}</div>
+                    <div className="transac_paymode">{newExpenses.tran_paytype}</div>
+                    <div className="transac_transactionamount" style={{color:newExpenses.tran_type === "Income" ? "#81C784" : "#FF9F63"}} >{newExpenses.tran_amount}</div>
+                    <div className="transac_category">{newExpenses.categories}</div>
+                    <div className="transac_transactiondate">{newExpenses.tran_date}</div></div>)}
+                </div>
               </div>
             </div>
             <div id="month" className={`${showMonth ? '' : 'hide' }`}>
@@ -721,10 +779,12 @@ const Analyse=() =>{
                     data={data}
                     options={options}
                     width={"100%"}
-                    height={"400px"}/>
+                    height={"300px"}/>
                 </div>
                 <div className="payment_mode ">
-                  <h2>Payment Modes:</h2>
+                <div className="flex jc_center">
+                  <h2>Payment Modes</h2>
+                  </div>
                   <div className='flex spaceard'>
                   <div>
                   <div className="pmcontent"><p>Cash: ₹{cash} </p></div>
@@ -738,7 +798,7 @@ const Analyse=() =>{
                   </div>
                 
                 </div>
-                  <h2>Total Number of Transaction: {totalno}</h2>
+                  <h1 className='ol'>Total Number of Transaction: {totalno}</h1>
                 <div className="stats flex spaceard">
                   <div className="avg_expense flex flex_d-col spaceard">
                     <h2>Expense Stats</h2>
@@ -754,6 +814,21 @@ const Analyse=() =>{
                     <p>Average Income: {Math.round((totalincome/counti) * 100) / 100}</p>
                   </div>
                 </div>
+                <div className="alltransactions">
+                <div className='grid heloo helo gapping'>
+                    <div className='transac_type'>Transaction-Type</div>
+                    <div className="transac_paymode">Payment-Mode</div>
+                    <div className="transac_transactionamount">Amount(₹)</div>
+                    <div className="transac_category">Categories</div>
+                    <div className="transac_transactiondate">Date</div>
+                </div>
+                {newExpenses.map((newExpenses) =><div className='grid heloo helo' >
+                    <div className='transac_type'style={{color:newExpenses.tran_type === "Income" ? "#81C784" : "#FF9F63"}}>{newExpenses.tran_type}</div>
+                    <div className="transac_paymode">{newExpenses.tran_paytype}</div>
+                    <div className="transac_transactionamount" style={{color:newExpenses.tran_type === "Income" ? "#81C784" : "#FF9F63"}} >{newExpenses.tran_amount}</div>
+                    <div className="transac_category">{newExpenses.categories}</div>
+                    <div className="transac_transactiondate">{newExpenses.tran_date}</div></div>)}
+                </div>
               </div>
               </div>
             <div id="year" className={`${showYear ? '' : 'hide' }`}>
@@ -768,10 +843,12 @@ const Analyse=() =>{
                     data={data}
                     options={options}
                     width={"100%"}
-                    height={"400px"}/>
+                    height={"300px"}/>
                 </div>
                 <div className="payment_mode ">
-                  <h2>Payment Modes:</h2>
+                <div className="flex jc_center">
+                  <h2>Payment Modes</h2>
+                  </div>
                   <div className='flex spaceard'>
                   <div>
                   <div className="pmcontent"><p>Cash: ₹{cash} </p></div>
@@ -785,7 +862,7 @@ const Analyse=() =>{
                   </div>
                 
                 </div>
-                  <h2>Total Number of Transaction: {totalno}</h2>
+                  <h1 className='ol'>Total Number of Transaction: {totalno}</h1>
                 <div className="stats flex spaceard">
                   <div className="avg_expense flex flex_d-col spaceard">
                     <h2>Expense Stats</h2>
@@ -802,6 +879,21 @@ const Analyse=() =>{
                     <p>Total Expense: {totalexpense}</p>
                     <p>Max Value Spend :{maxExpense}</p>
                   </div>
+                </div>
+                <div className="alltransactions">
+                <div className='grid heloo helo gapping'>
+                    <div className='transac_type'>Transaction-Type</div>
+                    <div className="transac_paymode">Payment-Mode</div>
+                    <div className="transac_transactionamount">Amount(₹)</div>
+                    <div className="transac_category">Categories</div>
+                    <div className="transac_transactiondate">Date</div>
+                </div>
+                {newExpenses.map((newExpenses) =><div className='grid heloo helo' >
+                    <div className='transac_type'style={{color:newExpenses.tran_type === "Income" ? "#81C784" : "#FF9F63"}}>{newExpenses.tran_type}</div>
+                    <div className="transac_paymode">{newExpenses.tran_paytype}</div>
+                    <div className="transac_transactionamount" style={{color:newExpenses.tran_type === "Income" ? "#81C784" : "#FF9F63"}} >{newExpenses.tran_amount}</div>
+                    <div className="transac_category">{newExpenses.categories}</div>
+                    <div className="transac_transactiondate">{newExpenses.tran_date}</div></div>)}
                 </div>
               </div>
               </div>

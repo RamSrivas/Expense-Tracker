@@ -5,9 +5,6 @@ import React, { useState ,Component , useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import "react-datepicker/dist/react-datepicker.css";
 let totexp=0;
-let max_exp=0;
-let max_inc=0;
-
 let tran_type=0
 let tran_amount=0
 let tran_octype=0
