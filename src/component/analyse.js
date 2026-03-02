@@ -1,12 +1,14 @@
 import React from 'react';
-import { useRef,useState,useEffect} from 'react';
-import { useNavigate } from 'react-router-dom';
-import {useLocation } from 'react-router-dom';
+import { useRef,useState} from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import '../component-css/analytic.css';
 import { Chart } from "react-google-charts";
 import '../component-css/utility.css';
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
+
+// utility for zero‑padding numbers to two digits
+const pad2 = n => n.toString().padStart(2,'0');
 
 const Analyse=() =>{
   const location = useLocation();
@@ -48,10 +50,6 @@ const Analyse=() =>{
   function click(){
     navigate('/Home' , {state:{names,Expenses,mb_amt}} );
   }
-  let count=0;
-  let totalno=0;
-  let totalincome=0;
-  let totalexpense = 0;
   let newDate = new Date()
   let date = newDate.getDate();
   let month = newDate.getMonth() + 1;
@@ -70,22 +68,24 @@ const Analyse=() =>{
   const [yy,setyy]=useState(parseInt(MMonday_date,10)+6)
   let yyy=y
   if(yyy<10){yyy="0"+yyy}
-  const [firstw, setfirstw]=useState(year+"-"+mmonth+ "-" +MMonday_date);
-  const [secondw, setsecondw]=useState(year+"-"+mmonth+ "-"+(yyy));
+  const initialWStart = `${year}-${pad2(month)}-${pad2(MMonday_date)}`;
+  const initialWEnd = `${year}-${pad2(month)}-${pad2(yyy)}`;
+  const [firstw, setfirstw]=useState(initialWStart);
+  const [secondw, setsecondw]=useState(initialWEnd);
   const [curmonthX,setcurmonthX]=useState(month);
   const [curmonthY,setcurmonthY]=useState(month);
   const [curyearX,setcuryearX]=useState(year);
   const [curyearY,setcuryearY]=useState(year);
 
-  const [firstm, setfirstm]=useState(year+"-"+mmonth+ "-" +MMonday_date);
-  const [secondm, setsecondm]=useState(year+"-"+mmonth+ "-"+(yyy));
+  const [firstm, setfirstm]=useState(initialWStart);
+  const [secondm, setsecondm]=useState(initialWEnd);
   const [curmonthXm,setcurmonthXm]=useState(month);
   const [curmonthYm,setcurmonthYm]=useState(month);
   const [curyearXm,setcuryearXm]=useState(year);
   const [curyearYm,setcuryearYm]=useState(year);
 
-  const [firsty, setfirsty]=useState(year+"-"+mmonth+ "-" +MMonday_date);
-  const [secondy, setsecondy]=useState(year+"-"+mmonth+ "-"+(yyy));
+  const [firsty, setfirsty]=useState(initialWStart);
+  const [secondy, setsecondy]=useState(initialWEnd);
   const [curmonthXy,setcurmonthXy]=useState(month);
   const [curmonthYy,setcurmonthYy]=useState(month);
   const [curyearXy,setcuryearXy]=useState(year);
@@ -157,7 +157,7 @@ const Analyse=() =>{
       {
         if(lagX>31){
           lagX=lagX-31;
-          if(lagMX!=12){
+          if(lagMX!==12){
           lagMX+=1
           setcurmonthX(lagMX);}
           else{lagYearX+=1;
@@ -194,7 +194,7 @@ const Analyse=() =>{
       {
         if(lagY>31){
           lagY=lagY-31;
-          if(lagMY!=12){
+          if(lagMY!==12){
           lagMY+=1
           setcurmonthY(lagMY);}
           else{lagYearY+=1;
@@ -240,7 +240,7 @@ const Analyse=() =>{
       {
         if(lagX<1){
           lagX=31+lagX;
-          if(lagMX!=1){
+          if(lagMX!==1){
             lagMX-=1
             setcurmonthX(lagMX);
           }
@@ -280,7 +280,7 @@ const Analyse=() =>{
       {
         if(lagY<1){
           lagY=31+lagY;
-          if(lagMY!=1){
+          if(lagMY!==1){
             lagMY-=1
             setcurmonthY(lagMY);
           }
@@ -337,7 +337,7 @@ const Analyse=() =>{
         lagYm=31;
         setcurmonthYm(lagMYm)
       }
-      else if(lagMYm===13)
+                if(lagMYm===13)
       {
         lagYearYm+=1;
         setcuryearYm(lagYearYm)
@@ -441,68 +441,20 @@ const Analyse=() =>{
 
 
     function set(){
-      if (lagMX<10 && lagX>9){
-      setfirstw(lagYearX+"-"+"0"+lagMX+ "-" +(lagX))}
-      else if(lagMX>9 && lagX<10){
-        setfirstw(lagYearX+"-"+lagMX+ "-" +"0"+(lagX))}
-      else if(lagMX<10 && lagX<10){
-        setfirstw(lagYearX+"-"+"0"+lagMX+ "-" +"0"+(lagX))}
-      else{
-        setfirstw(lagYearX+"-"+lagMX+ "-" +(lagX))}
-
-
-      if (lagMY<10 && lagY>9){
-        setsecondw(lagYearY+"-"+"0"+lagMY+ "-" +(lagY))}
-        else if(lagMY>9 && lagY<10){
-          setsecondw(lagYearY+"-"+lagMY+ "-" +"0"+(lagY))}
-        else if(lagMY<10 && lagY<10){
-          setsecondw(lagYearY+"-"+"0"+lagMY+ "-" +"0"+(lagY))}
-        else{
-          setsecondw(lagYearY+"-"+lagMY+ "-" +(lagY))}
+      setfirstw(`${lagYearX}-${pad2(lagMX)}-${pad2(lagX)}`);
+      setsecondw(`${lagYearY}-${pad2(lagMY)}-${pad2(lagY)}`);
     }
     
     
     function setm(){
-      if (lagMXm<10 && lagXm>9){
-      setfirstm(lagYearXm+"-"+"0"+lagMXm+ "-" +(lagXm))}
-      else if(lagMXm>9 && lagXm<10){
-        setfirstm(lagYearXm+"-"+lagMXm+ "-" +"0"+(lagXm))}
-      else if(lagMXm<10 && lagXm<10){
-        setfirstm(lagYearXm+"-"+"0"+lagMXm+ "-" +"0"+(lagXm))}
-      else{
-        setfirstm(lagYearXm+"-"+lagMXm+ "-" +(lagXm))}
-
-
-      if (lagMYm<10 && lagYm>9){
-        setsecondm(lagYearYm+"-"+"0"+lagMYm+ "-" +(lagYm))}
-        else if(lagMYm>9 && lagYm<10){
-          setsecondm(lagYearYm+"-"+lagMYm+ "-" +"0"+(lagYm))}
-        else if(lagMYm<10 && lagYm<10){
-          setsecondm(lagYearYm+"-"+"0"+lagMYm+ "-" +"0"+(lagYm))}
-        else{
-          setsecondm(lagYearYm+"-"+lagMYm+ "-" +(lagYm))}
+      setfirstm(`${lagYearXm}-${pad2(lagMXm)}-${pad2(lagXm)}`);
+      setsecondm(`${lagYearYm}-${pad2(lagMYm)}-${pad2(lagYm)}`);
     }
 
 
     function setyyy(){
-      if (lagMXy<10 && lagXy>9){
-      setfirsty(lagYearXy+"-"+"0"+lagMXy+ "-" +(lagXy))}
-      else if(lagMXy>9 && lagXy<10){
-        setfirsty(lagYearXy+"-"+lagMXy+ "-" +"0"+(lagXy))}
-      else if(lagMXy<10 && lagXy<10){
-        setfirsty(lagYearXy+"-"+"0"+lagMXy+ "-" +"0"+(lagXy))}
-      else{
-        setfirsty(lagYearXy+"-"+lagMXy+ "-" +(lagXy))}
-
-
-      if (lagMYy<10 && lagYy>9){
-        setsecondy(lagYearYy+"-"+"0"+lagMYy+ "-" +(lagYy))}
-        else if(lagMYy>9 && lagYy<10){
-          setsecondy(lagYearYy+"-"+lagMYy+ "-" +"0"+(lagYy))}
-        else if(lagMYy<10 && lagYy<10){
-          setsecondy(lagYearYy+"-"+"0"+lagMYy+ "-" +"0"+(lagYy))}
-        else{
-          setsecondy(lagYearYy+"-"+lagMYy+ "-" +(lagYy))}
+      setfirsty(`${lagYearXy}-${pad2(lagMXy)}-${pad2(lagXy)}`);
+      setsecondy(`${lagYearYy}-${pad2(lagMYy)}-${pad2(lagYy)}`);
     }
 
 
@@ -535,18 +487,6 @@ const Analyse=() =>{
       setyyy();
     }
     
-    let Groceries=0;
-    let Entertainment=0;
-    let Travel=0;
-    let Shopping=0;
-    let Medical=0;
-    let Other=0;
-    let cash=0;
-    let cc=0;
-    let dc=0;
-    let online=0;
-    let other=0;
-    let counti=0;
    
 
 
@@ -589,90 +529,67 @@ const Analyse=() =>{
         but_bacy();
     };
     
-    let maxExpense=0
-    let maxIncome=0
-    
-    const newExpenses = []
-    Expenses.forEach((Expenses) =>{
-      if (showWeek) {
-        if(firstw<=Expenses.tran_date && secondw>=Expenses.tran_date)
-        {
-          newExpenses.push(Expenses)
-        }
-      }
-      else if (showMonth)
-      {
-        if(firstm<=Expenses.tran_date && secondm>=Expenses.tran_date)
-        {
-          newExpenses.push(Expenses)
-        }
-      }
-      else if(showYear)
-      {
-        if(firsty<=Expenses.tran_date && secondy>=Expenses.tran_date)
-        {
-          newExpenses.push(Expenses)
-        }
-      }
-    })  
-    for(var i =0;i<newExpenses.length;i++){
-      if(newExpenses[i].tran_type=="Expense"){
-        totalexpense+=newExpenses[i].tran_amount
-        count+=1;
-        if(newExpenses[i].tran_amount>maxExpense)
-        { maxExpense=newExpenses[i].tran_amount}
-        
-        if(newExpenses[i].categories=="Groceries"){
-          Groceries+=newExpenses[i].tran_amount
-        }
-        if(newExpenses[i].categories=="Entertainment"){
-            Entertainment+=newExpenses[i].tran_amount
-          }
-          if(newExpenses[i].categories=="Travel"){
-            Travel+=newExpenses[i].tran_amount
-          }
-          if(newExpenses[i].categories=="Shopping"){
-            Shopping+=newExpenses[i].tran_amount
-          }
-          if(newExpenses[i].categories=="Medical"){
-            Medical+=newExpenses[i].tran_amount
-          }
-          if(newExpenses[i].categories=="Other"){
-            Other+=newExpenses[i].tran_amount
-          }
-          if(newExpenses[i].tran_paytype=="Cash"){
-            cash+=newExpenses[i].tran_amount
-          }
-          if(newExpenses[i].tran_paytype=="Credit Card"){
-            cc+=newExpenses[i].tran_amount
-          }
-          if(newExpenses[i].tran_paytype=="Debit Card"){
-            dc+=newExpenses[i].tran_amount
-          }
-          if(newExpenses[i].tran_paytype=="Online Payment"){
-            online+=newExpenses[i].tran_amount
-          }
-          if(newExpenses[i].tran_paytype=="Other"){
-            other+=newExpenses[i].tran_amount
-          }
-        }
+    // produce filtered expenses and aggregated statistics together
+    const { newExpenses, stats } = React.useMemo(() => {
+      const filtered = Expenses.filter(exp => {
+        const date = exp.tran_date;
+        if (showWeek && firstw <= date && secondw >= date) return true;
+        if (showMonth && firstm <= date && secondm >= date) return true;
+        if (showYear && firsty <= date && secondy >= date) return true;
+        return false;
+      });
 
-      else{
-        totalincome+=newExpenses[i].tran_amount;
-        counti++;
-        if(newExpenses[i].tran_amount>maxIncome)
-        { maxIncome=newExpenses[i].tran_amount}
-      }totalno=counti+count;
-      }
-      let data = [
-        ["Category", "Expense"],
-        ["Groceries", Groceries],
-        ["Entertainment", Entertainment],
-        ["Travel", Travel],
-        ["Shopping", Shopping],
-        ["Medical", Medical],
-        ["Other", Other],
-      ];
+      const result = {
+        totalexpense: 0,
+        totalincome: 0,
+        count: 0,
+        counti: 0,
+        maxExpense: 0,
+        maxIncome: 0,
+        Groceries: 0,
+        Entertainment: 0,
+        Travel: 0,
+        Shopping: 0,
+        Medical: 0,
+        Other: 0,
+        cash: 0,
+        cc: 0,
+        dc: 0,
+        online: 0,
+        other: 0
+      };
+      filtered.forEach(e => {
+        if (e.tran_type === "Expense") {
+          result.totalexpense += e.tran_amount;
+          result.count += 1;
+          if (e.tran_amount > result.maxExpense) result.maxExpense = e.tran_amount;
+
+          if (result.hasOwnProperty(e.categories)) {
+            result[e.categories] += e.tran_amount;
+          }
+          if (result.hasOwnProperty(e.tran_paytype.toLowerCase())) {
+            result[e.tran_paytype.toLowerCase()] += e.tran_amount;
+          }
+        } else {
+          result.totalincome += e.tran_amount;
+          result.counti += 1;
+          if (e.tran_amount > result.maxIncome) result.maxIncome = e.tran_amount;
+        }
+      });
+
+      return { newExpenses: filtered, stats: result };
+    }, [Expenses, showWeek, showMonth, showYear, firstw, secondw, firstm, secondm, firsty, secondy]);
+
+    const totalno = stats.count + stats.counti;
+    const data = [
+      ["Category", "Expense"],
+      ["Groceries", stats.Groceries],
+      ["Entertainment", stats.Entertainment],
+      ["Travel", stats.Travel],
+      ["Shopping", stats.Shopping],
+      ["Medical", stats.Medical],
+      ["Other", stats.Other],
+    ];
 
 
   return (
@@ -692,9 +609,9 @@ const Analyse=() =>{
             </div>
             <div className='flex spaceard Ana_type'>
                 <div className="selectedana " style={{left:selanatype+'%'}} ></div>
-                <a className='Ana_tab' onClick={selweek} >Week</a>
-                <a className='Ana_tab' onClick={selmonth} >Month</a>
-                <a className='Ana_tab' onClick={selyear}  >Year</a>
+                <button type="button" className='Ana_tab' onClick={selweek} >Week</button>
+                <button type="button" className='Ana_tab' onClick={selmonth} >Month</button>
+                <button type="button" className='Ana_tab' onClick={selyear}  >Year</button>
             </div>
           <div id='pdf' ref={pdfRef}> 
 
@@ -721,13 +638,13 @@ const Analyse=() =>{
                   </div>
                   <div className='flex spaceard'>
                   <div>
-                  <div className="pmcontent"><p>Cash: ₹{cash} </p></div>
-                  <div className="pmcontent"><p>Credit card: ₹{cc} </p></div>
-                  <div className="pmcontent"><p>Debit card: ₹{dc}</p></div>
+                  <div className="pmcontent"><p>Cash: ₹{stats.cash} </p></div>
+                  <div className="pmcontent"><p>Credit card: ₹{stats.cc} </p></div>
+                  <div className="pmcontent"><p>Debit card: ₹{stats.dc}</p></div>
                   </div>
                   <div>
-                  <div className="pmcontent"><p>Online Payments: ₹{online}</p></div>
-                  <div className="pmcontent"><p>Other: ₹{other}</p></div>
+                  <div className="pmcontent"><p>Online Payments: ₹{stats.online}</p></div>
+                  <div className="pmcontent"><p>Other: ₹{stats.other}</p></div>
                   </div>
                   </div>
                 
@@ -736,18 +653,18 @@ const Analyse=() =>{
                 <div className="stats flex spaceard">
                   <div className="avg_expense flex flex_d-col spaceard">
                     <h2>Expense Stats</h2>
-                    <p>Per day Expense: {Math.round((totalexpense/7) * 100) / 100}</p>
-                    <p>Average Expense: {Math.round((totalexpense/count) * 100) / 100}</p>
-                    <p>Total Expense: {totalexpense}</p>
-                    <p>Max Value Spend :{maxExpense}</p>
+                    <p>Per day Expense: {Math.round((stats.totalexpense/7) * 100) / 100}</p>
+                    <p>Average Expense: {stats.count ? Math.round((stats.totalexpense/stats.count) * 100) / 100 : 0}</p>
+                    <p>Total Expense: {stats.totalexpense}</p>
+                    <p>Max Value Spend :{stats.maxExpense}</p>
                   </div>
                   <div className="space"></div>
                   <div className="avg_income flex flex_d-col spaceard">
                     <h2>Income Stats</h2>
-                    <p>Per day Income: {Math.round((totalincome/7) * 100) / 100}</p>
-                    <p>Average Income: {Math.round((totalincome/counti) * 100) / 100}</p>
-                    <p>Total Income:{totalincome}</p>
-                    <p>Max Value Spend :{totalincome}</p>
+                    <p>Per day Income: {Math.round((stats.totalincome/7) * 100) / 100}</p>
+                    <p>Average Income: {stats.counti ? Math.round((stats.totalincome/stats.counti) * 100) / 100 : 0}</p>
+                    <p>Total Income:{stats.totalincome}</p>
+                    <p>Max Value Spend :{stats.maxIncome}</p>
                   </div>
                 </div>
                 <div className="alltransactions">
@@ -758,12 +675,12 @@ const Analyse=() =>{
                     <div className="transac_category">Categories</div>
                     <div className="transac_transactiondate">Date</div>
                 </div>
-                {newExpenses.map((newExpenses) =><div className='grid heloo helo' >
-                    <div className='transac_type'style={{color:newExpenses.tran_type === "Income" ? "#81C784" : "#FF9F63"}}>{newExpenses.tran_type}</div>
-                    <div className="transac_paymode">{newExpenses.tran_paytype}</div>
-                    <div className="transac_transactionamount" style={{color:newExpenses.tran_type === "Income" ? "#81C784" : "#FF9F63"}} >{newExpenses.tran_amount}</div>
-                    <div className="transac_category">{newExpenses.categories}</div>
-                    <div className="transac_transactiondate">{newExpenses.tran_date}</div></div>)}
+                {newExpenses.map((exp) =><div className='grid heloo helo' >
+                    <div className='transac_type'style={{color:exp.tran_type === "Income" ? "#81C784" : "#FF9F63"}}>{exp.tran_type}</div>
+                    <div className="transac_paymode">{exp.tran_paytype}</div>
+                    <div className="transac_transactionamount" style={{color:exp.tran_type === "Income" ? "#81C784" : "#FF9F63"}} >{exp.tran_amount}</div>
+                    <div className="transac_category">{exp.categories}</div>
+                    <div className="transac_transactiondate">{exp.tran_date}</div></div>)}
                 </div>
               </div>
             </div>
@@ -787,13 +704,13 @@ const Analyse=() =>{
                   </div>
                   <div className='flex spaceard'>
                   <div>
-                  <div className="pmcontent"><p>Cash: ₹{cash} </p></div>
-                  <div className="pmcontent"><p>Credit card: ₹{cc} </p></div>
-                  <div className="pmcontent"><p>Debit card: ₹{dc}</p></div>
+                  <div className="pmcontent"><p>Cash: ₹{stats.cash} </p></div>
+                  <div className="pmcontent"><p>Credit card: ₹{stats.cc} </p></div>
+                  <div className="pmcontent"><p>Debit card: ₹{stats.dc}</p></div>
                   </div>
                   <div>
-                  <div className="pmcontent"><p>Online Payments: ₹{online}</p></div>
-                  <div className="pmcontent"><p>Other: ₹{other}</p></div>
+                  <div className="pmcontent"><p>Online Payments: ₹{stats.online}</p></div>
+                  <div className="pmcontent"><p>Other: ₹{stats.other}</p></div>
                   </div>
                   </div>
                 
@@ -802,16 +719,16 @@ const Analyse=() =>{
                 <div className="stats flex spaceard">
                   <div className="avg_expense flex flex_d-col spaceard">
                     <h2>Expense Stats</h2>
-                    <p>Per day Expense: {Math.round((totalexpense/countd) * 100) / 100}</p>
-                    <p>Average Expense: {Math.round((totalexpense/count) * 100) / 100}</p>
-                    <p>Total Expense: {totalexpense}</p>
-                    <p>Max Value Spend :{maxExpense}</p>
+                    <p>Per day Expense: {Math.round((stats.totalexpense/countd) * 100) / 100}</p>
+                    <p>Average Expense: {stats.count ? Math.round((stats.totalexpense/stats.count) * 100) / 100 : 0}</p>
+                    <p>Total Expense: {stats.totalexpense}</p>
+                    <p>Max Value Spend :{stats.maxExpense}</p>
                   </div>
                   <div className="space"></div>
                   <div className="avg_income flex flex_d-col spaceard">
                     <h2>Income Stats</h2>
-                    <p>Per day Income: {Math.round((totalincome/countd) * 100) / 100}</p>
-                    <p>Average Income: {Math.round((totalincome/counti) * 100) / 100}</p>
+                    <p>Per day Income: {Math.round((stats.totalincome/countd) * 100) / 100}</p>
+                    <p>Average Income: {stats.counti ? Math.round((stats.totalincome/stats.counti) * 100) / 100 : 0}</p>
                   </div>
                 </div>
                 <div className="alltransactions">
@@ -822,12 +739,12 @@ const Analyse=() =>{
                     <div className="transac_category">Categories</div>
                     <div className="transac_transactiondate">Date</div>
                 </div>
-                {newExpenses.map((newExpenses) =><div className='grid heloo helo' >
-                    <div className='transac_type'style={{color:newExpenses.tran_type === "Income" ? "#81C784" : "#FF9F63"}}>{newExpenses.tran_type}</div>
-                    <div className="transac_paymode">{newExpenses.tran_paytype}</div>
-                    <div className="transac_transactionamount" style={{color:newExpenses.tran_type === "Income" ? "#81C784" : "#FF9F63"}} >{newExpenses.tran_amount}</div>
-                    <div className="transac_category">{newExpenses.categories}</div>
-                    <div className="transac_transactiondate">{newExpenses.tran_date}</div></div>)}
+                {newExpenses.map((exp) =><div className='grid heloo helo' >
+                    <div className='transac_type'style={{color:exp.tran_type === "Income" ? "#81C784" : "#FF9F63"}}>{exp.tran_type}</div>
+                    <div className="transac_paymode">{exp.tran_paytype}</div>
+                    <div className="transac_transactionamount" style={{color:exp.tran_type === "Income" ? "#81C784" : "#FF9F63"}} >{exp.tran_amount}</div>
+                    <div className="transac_category">{exp.categories}</div>
+                    <div className="transac_transactiondate">{exp.tran_date}</div></div>)}
                 </div>
               </div>
               </div>
@@ -851,13 +768,13 @@ const Analyse=() =>{
                   </div>
                   <div className='flex spaceard'>
                   <div>
-                  <div className="pmcontent"><p>Cash: ₹{cash} </p></div>
-                  <div className="pmcontent"><p>Credit card: ₹{cc} </p></div>
-                  <div className="pmcontent"><p>Debit card: ₹{dc}</p></div>
+                  <div className="pmcontent"><p>Cash: ₹{stats.cash} </p></div>
+                  <div className="pmcontent"><p>Credit card: ₹{stats.cc} </p></div>
+                  <div className="pmcontent"><p>Debit card: ₹{stats.dc}</p></div>
                   </div>
                   <div>
-                  <div className="pmcontent"><p>Online Payments: ₹{online}</p></div>
-                  <div className="pmcontent"><p>Other: ₹{other}</p></div>
+                  <div className="pmcontent"><p>Online Payments: ₹{stats.online}</p></div>
+                  <div className="pmcontent"><p>Other: ₹{stats.other}</p></div>
                   </div>
                   </div>
                 
@@ -866,18 +783,18 @@ const Analyse=() =>{
                 <div className="stats flex spaceard">
                   <div className="avg_expense flex flex_d-col spaceard">
                     <h2>Expense Stats</h2>
-                    <p>Per day Expense: {Math.round((totalexpense/county) * 100) / 100}</p>
-                    <p>Average Expense: {Math.round((totalexpense/count) * 100) / 100}</p>
-                    <p>Total Expense: {totalexpense}</p>
-                    <p>Max Value Spend :{maxExpense}</p>
+                    <p>Per day Expense: {Math.round((stats.totalexpense/countd) * 100) / 100}</p>
+                    <p>Average Expense: {stats.count ? Math.round((stats.totalexpense/stats.count) * 100) / 100 : 0}</p>
+                    <p>Total Expense: {stats.totalexpense}</p>
+                    <p>Max Value Spend :{stats.maxExpense}</p>
                   </div>
                   <div className="space"></div>
                   <div className="avg_income flex flex_d-col spaceard">
                     <h2>Income Stats</h2>
-                    <p>Per day Income: {Math.round((totalincome/county) * 100) / 100}</p>
-                    <p>Average Income: {Math.round((totalincome/counti) * 100) / 100}</p>
-                    <p>Total Expense: {totalexpense}</p>
-                    <p>Max Value Spend :{maxExpense}</p>
+                    <p>Per day Income: {Math.round((stats.totalincome/county) * 100) / 100}</p>
+                    <p>Average Income: {stats.counti ? Math.round((stats.totalincome/stats.counti) * 100) / 100 : 0}</p>
+                    <p>Total Income: {stats.totalincome}</p>
+                    <p>Max Value Spend :{stats.maxIncome}</p>
                   </div>
                 </div>
                 <div className="alltransactions">
@@ -888,12 +805,12 @@ const Analyse=() =>{
                     <div className="transac_category">Categories</div>
                     <div className="transac_transactiondate">Date</div>
                 </div>
-                {newExpenses.map((newExpenses) =><div className='grid heloo helo' >
-                    <div className='transac_type'style={{color:newExpenses.tran_type === "Income" ? "#81C784" : "#FF9F63"}}>{newExpenses.tran_type}</div>
-                    <div className="transac_paymode">{newExpenses.tran_paytype}</div>
-                    <div className="transac_transactionamount" style={{color:newExpenses.tran_type === "Income" ? "#81C784" : "#FF9F63"}} >{newExpenses.tran_amount}</div>
-                    <div className="transac_category">{newExpenses.categories}</div>
-                    <div className="transac_transactiondate">{newExpenses.tran_date}</div></div>)}
+                {newExpenses.map((exp) =><div className='grid heloo helo' >
+                    <div className='transac_type'style={{color:exp.tran_type === "Income" ? "#81C784" : "#FF9F63"}}>{exp.tran_type}</div>
+                    <div className="transac_paymode">{exp.tran_paytype}</div>
+                    <div className="transac_transactionamount" style={{color:exp.tran_type === "Income" ? "#81C784" : "#FF9F63"}} >{exp.tran_amount}</div>
+                    <div className="transac_category">{exp.categories}</div>
+                    <div className="transac_transactiondate">{exp.tran_date}</div></div>)}
                 </div>
               </div>
               </div>

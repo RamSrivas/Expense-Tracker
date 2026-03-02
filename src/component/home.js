@@ -1,27 +1,61 @@
 import '../component-css/home.css'
 import '../component-css/utility.css'
 import {useLocation } from 'react-router-dom';
-import React, { useState ,Component , useEffect } from "react";
+import React, { useState , useEffect, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
 import "react-datepicker/dist/react-datepicker.css";
-let totexp=0;
-let tran_type=0
-let tran_amount=0
-let tran_octype=0
-let tran_ocno=0
-let tran_date=0 
-let tran_paytype= 0
-let categories=0
-let note=0
-let totinc=0;
-let balance=0;
+
+// helper to generate additional dates for recurring entries
+// base is YYYY-MM-DD, count is number of occurrences, type is once/weekly/monthly/yearly
+function generateDates(base, count, type) {
+    const pad2 = (n: number) => n.toString().padStart(2, '0');
+    let [year, month, date] = base.split('-').map(Number);
+    const out: DateType[] = [];
+    for (let i = 1; i < count; i++) {
+        switch (type) {
+            case 'once':
+                date += 1;
+                break;
+            case 'weekly':
+                date += 7;
+                break;
+            case 'monthly':
+                month += 1;
+                break;
+            case 'yearly':
+                year += 1;
+                break;
+            default:
+                break;
+        }
+        // adjust day/month overflow
+        let mdays = 31;
+        if ([4,6,9,11].includes(month)) mdays = 30;
+        else if (month === 2) mdays = (year % 4 === 0 ? 29 : 28);
+        while (date > mdays) {
+            date -= mdays;
+            month += 1;
+            mdays = [4,6,9,11].includes(month) ? 30 : (month === 2 ? (year % 4 === 0 ? 29 : 28) : 31);
+        }
+        if (month > 12) {
+            month = 1;
+            year += 1;
+        }
+        out.push(`${year}-${pad2(month)}-${pad2(date)}`);
+    }
+    return out;
+}
 const Home = () => {
     const location =useLocation();
     const [Expenses, setExpense]=useState(location.state.Expenses);
     const names=location.state.names;
-    const [mb_amt,setmb_amt]=useState(location.state.mb_amt);
+    const [mb_amt] = useState(location.state.mb_amt);
     const navigate=useNavigate();
-    const [position, setPosition] = useState({ x: 0, y: 0 });  
+    // cursor position will be handled with refs to avoid rerendering every move
+    const cursorRef = useRef(null);
+    const pos = useRef({ x: 0, y: 0 });
+    const current = useRef({ x: 0, y: 0 });
+
     const [enteredtype, setEnteredtype]= useState('')
     const [enteredAmount, setEnteredAmount]= useState('')
     const [enteredDate, setEnteredDate]= useState('')
@@ -31,247 +65,47 @@ const Home = () => {
     const [enteredcat, setEnteredcat]= useState('')
     const [enteredocno, setEnteredocno]= useState(1)
     const [text,settext]=useState("Add")
-    let newDate = new Date()
-    let month = newDate.getMonth() + 1;
-    if(month<10){month="0"+month;}
-    let year = newDate.getFullYear();
-    let first = year+"-"+month+"-"+"01"
-    let second = year+"-"+month+"-"+"31";
+    const now = new Date();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = now.getFullYear();
+    const first = `${year}-${month}-01`;
+    const second = `${year}-${month}-31`;
     
-    const newExpenses = []
-    Expenses.forEach((Expenses) =>{
-      if(first<=Expenses.tran_date && second>=Expenses.tran_date)
-      {
-        newExpenses.push(Expenses)
-      }
-    }) 
+    // filter transactions for current month
+    const newExpenses = React.useMemo(() => {
+      return Expenses.filter(e => first <= e.tran_date && second >= e.tran_date);
+    }, [Expenses, first, second]);
 
-    const thief=()=>{
-        tran_type=enteredtype
-        tran_amount=enteredAmount
-        tran_octype= enteredoctype
-        tran_ocno= enteredocno
-        tran_date=enteredDate
-        tran_paytype= enteredpaytype
-        categories=enteredcat
-        note=enterednote
-        
-    }
-    const submitDATA=(d,e)=>{
-        let expenseData ={tran_type:tran_type,
-            tran_amount:+tran_amount,
-            tran_octype: tran_octype,
-            tran_ocno: e,
-            tran_date:d,
-            tran_paytype: tran_paytype,
-            categories: categories,
-            note:note}; 
-    setExpense((preExpences) => {
-        return [expenseData, ...preExpences]})
-    }
+    // compute totals and balance
+    const { totexp, totinc, balance } = React.useMemo(() => {
+      let te = 0;
+      let ti = 0;
+      newExpenses.forEach(e => {
+        if (e.tran_type === "Income") ti += e.tran_amount;
+        else te += e.tran_amount;
+      });
+      return {
+        totexp: te,
+        totinc: ti,
+        balance: ti >= te ? `₹${ti - te}` : `-₹${te - ti}`
+      };
+    }, [newExpenses]);
+
+    // create a single expense object from current form state
+    const makeExpense = (date, occ = 1) => ({
+      tran_type: enteredtype,
+      tran_amount: +enteredAmount,
+      tran_octype: enteredoctype,
+      tran_ocno: occ,
+      tran_date: date,
+      tran_paytype: enteredpaytype,
+      categories: enteredcat,
+      note: enterednote
+    });
 
 
-    const editdata =()=>{
-        let ocnumb=parseInt(tran_ocno,10)
-        if(ocnumb!==1){
-            let fulldate=enteredDate;// 2024-01-04
-            let date=fulldate.substring(8, 10);
-            let month=fulldate.substring(5, 7);
-            let year=fulldate.substring(0, 4);
-            tran_ocno=1;
-            if(tran_octype==="once"){
-                for(var i=1;i<ocnumb;i++){
-                    date=parseInt(date,10)
-                    month=parseInt(month,10)
-                    year=parseInt(year,10)
-                    date+=1;
-                    
-                    if(month===1 || month===3 ||month===5 ||month===7 ||month===8 ||month===10 ||month===12)
-                    {   
-                        if(date===32){
-                            date=1;
-                            if(month!==12){
-                                month+=1;
-                            }
-                            else {
-                                year+=1;
-                                month=1;
-                            }
-                        }
-                    }
-                    else if(month===2)
-                    {
-                        if(year%4===0){
-                            if(date===30){
-                                date=1;
-                                month+=1;
-                            }
-                        }
-                        else{ 
-                            if(date===29){
-                                date=1;
-                                month+=1
-                            }
-                        }
-                    }
-                    else{
-                        if(date===31){
-                            date=1;
-                            month+=1;
-                        }
-                    }
-                    if(date<10){date="0"+date}
-                    if(month<10){month="0"+month}
-                    let d =year+"-"+month+"-"+date
-                    submitDATA(d,tran_ocno);
-                }
-                // Expenses.tran_ocno=1;
 
-            }
-            else if(tran_octype==="weekly"){
-                for(var i=1;i<ocnumb;i++){
-                    date=parseInt(date,10)
-                    month=parseInt(month,10)
-                    year=parseInt(year,10)
-                    date+=7;
-                    
-                    if(month===1 || month===3 ||month===5 ||month===7 ||month===8 ||month===10 ||month===12)
-                    {   
-                        if(date>31){
-                            date=date-31;
-                            if(month!==12){
-                                month+=1;
-                            }
-                            else {
-                                year+=1;
-                                month=1;
-                            }
-                        }
-                    }
-                    else if(month===2)
-                    {
-                        if(year%4===0){
-                            if(date>29){
-                                date=date-29;
-                                month+=1;
-                            }
-                        }
-                        else{ 
-                            if(date>28){
-                                date=date-28;
-                                month+=1
-                            }
-                        }
-                    }
-                    else{
-                        if(date>30){
-                            date=date-30;
-                            month+=1;
-                        }
-                    }
-                    if(date<10){date="0"+date}
-                    if(month<10){month="0"+month}
-                    let d =year+"-"+month+"-"+date
-                    submitDATA(d,tran_ocno);
-                }
-            }
-            else if(tran_octype==="monthly"){
-                for(var i=1;i<ocnumb;i++){
-                    date=parseInt(date,10)
-                    month=parseInt(month,10)
-                    year=parseInt(year,10)
-                    month+=1;
-                    
-                    if(month===1 || month===3 ||month===5 ||month===7 ||month===8 ||month===10 ||month===12)
-                    {   
-                        if(date>31){
-                            date=date-31;
-                            if(month!==12){
-                                month+=1;
-                            }
-                            else {
-                                year+=1;
-                                month=1;
-                            }
-                        }
-                    }
-                    else if(month===2)
-                    {
-                        if(year%4===0){
-                            if(date>29){
-                                date=date-29;
-                                month+=1;
-                            }
-                        }
-                        else{ 
-                            if(date>28){
-                                date=date-28;
-                                month+=1
-                            }
-                        }
-                    }
-                    else{
-                        if(date>30){
-                            date=date-30;
-                            month+=1;
-                        }
-                    }
-                    if(date<10){date="0"+date}
-                    if(month<10){month="0"+month}
-                    let d =year+"-"+month+"-"+date
-                    submitDATA(d,tran_ocno);
-                }
-            }
-            else if(tran_octype==="yearly"){
-                for(var i=1;i<ocnumb;i++){
-                    date=parseInt(date,10)
-                    month=parseInt(month,10)
-                    year=parseInt(year,10)
-                    year+=1;
-                    
-                    if(month===1 || month===3 ||month===5 ||month===7 ||month===8 ||month===10 ||month===12)
-                    {   
-                        if(date>31){
-                            date=date-31;
-                            if(month!==12){
-                                month+=1;
-                            }
-                            else {
-                                year+=1;
-                                month=1;
-                            }
-                        }
-                    }
-                    else if(month===2)
-                    {
-                        if(year%4===0){
-                            if(date>29){
-                                date=date-29;
-                                month+=1;
-                            }
-                        }
-                        else{ 
-                            if(date>28){
-                                date=date-28;
-                                month+=1
-                            }
-                        }
-                    }
-                    else{
-                        if(date>30){
-                            date=date-30;
-                            month+=1;
-                        }
-                    }
-                    if(date<10){date="0"+date}
-                    if(month<10){month="0"+month}
-                    let d =year+"-"+month+"-"+date
-                    submitDATA(d,tran_ocno);
-                }
-            }
-            
-        }
-    }
+    // previous recurrence logic replaced by generateDates
 
     function typeChangeHandler(x){
         setEnteredtype(x);
@@ -299,56 +133,58 @@ const Home = () => {
             setEnterednote(event.target.value);
         }
         function submitHandler(event){
-
-                let expenseData ={tran_type:enteredtype,
-                tran_amount:+enteredAmount,
-                tran_octype: enteredoctype,
-                tran_ocno: enteredocno,
-                tran_date:enteredDate,
-                tran_paytype: enteredpaytype,
-                categories: enteredcat,
-                note:enterednote}; 
-        setExpense((preExpences) => {
-            return [expenseData, ...preExpences]})
-
-
-            thief();
-              
             event.preventDefault();
-            
+            const baseDate = enteredDate;
+            const ocnumb = parseInt(enteredocno,10);
+
+            // add first entry
+            setExpense(prev => [makeExpense(baseDate, 1), ...prev]);
+
+            // add any recurring entries
+            if (ocnumb > 1) {
+              const dates = generateDates(baseDate, ocnumb, enteredoctype);
+              dates.forEach((d, idx) => {
+                setExpense(prev => [makeExpense(d, idx+2), ...prev]);
+              });
+            }
+
+            // reset form
             setEnteredAmount('');
             setEnteredDate('');
-            setEnteredocno(1)
+            setEnteredocno(1);
             setEnteredtype('');
             setEnteredoctype('');
             setEnteredpaytype('');
             setEnteredcat('');
             setEnterednote('');
             hidet();
-            editdata();
         };
-        useEffect(() => {totexp=0;totinc=0;
-            for(let i = 0; i < newExpenses.length ; i++)
-                { 
-                    if(newExpenses[i].tran_type === "Income"){
-                        totinc += newExpenses[i].tran_amount;
-                    }
-                    else{totexp+=newExpenses[i].tran_amount;}
-                }
-                if(totinc>=totexp)balance='₹'+ (totinc-totexp);
-                else balance='-₹'+(totexp-totinc)
-        }, [newExpenses]);
+        // totals are now memoized, effect not required
     
-    const handleMouseMove = (e) => {
-        const x = e.pageX;
-        const y = e.pageY;
-        setPosition({ x: x - 10, y: y - 10 });
+    const handleMouseMove = e => {
+        pos.current.x = e.pageX;
+        pos.current.y = e.pageY;
     };
-    
+
     useEffect(() => {
         document.addEventListener('mousemove', handleMouseMove);
         document.addEventListener('mouseleave', handleMouseMove);
-        
+
+        const animate = () => {
+            const factor = 0.1; 
+            const dx = pos.current.x - current.current.x;
+            const dy = pos.current.y - current.current.y;
+            current.current.x += dx * factor;
+            current.current.y += dy * factor;
+            if (cursorRef.current) {
+                const angle = Math.atan2(dy, dx);
+                cursorRef.current.style.transform =
+                    `translate3d(${current.current.x - 10}px, ${current.current.y - 10}px, 0) rotate(${angle}rad)`;
+            }
+            requestAnimationFrame(animate);
+        };
+        animate();
+
         return () => {
             document.removeEventListener('mousemove', handleMouseMove);
             document.removeEventListener('mouseleave', handleMouseMove);
@@ -367,14 +203,14 @@ const Home = () => {
     let left=mb_amt-totexp;
     const leftper=(totexp/mb_amt)*100;
     useEffect(() => {
-        if(mb_amt != undefined && parseInt(mb_amt,10) != 0){
+        if(mb_amt !== undefined && parseInt(mb_amt,10) !== 0){
             setIsVisibleMB(false);
             settext("Edit")
         }
         else if(mb_amt === undefined || parseInt(mb_amt,10) === 0){
             setIsVisibleMB(true);
             settext("Add")}     
-        },[left]);
+        },[left, mb_amt]);
 
         
     const showMB = () => {
@@ -446,7 +282,7 @@ const Home = () => {
     }
     return (
         <>
-        <div className="cursor" style={{ left:position.x+'px',top:position.y+'px' }} ></div>
+        <div ref={cursorRef} className="cursor" />
         <div  className='page'>
             <section className='flex spacebtw'>
                 <div>
@@ -570,7 +406,7 @@ const Home = () => {
                 </div>
             </section>
             <form onSubmit={submitHandler} className={`${isVisibleTran ? '' : 'hide'}`} >
-                <div className='blurbg'></div>
+                <div className='blurbg'onClick={hidet}></div>
                 <div className="transpagebox br-2">
                     <div className="flex spaceard ai_center trantitle br-2">
                     <button className="glow-on-hover margin_1-0" onClick={hidet}>Back</button>
@@ -581,8 +417,8 @@ const Home = () => {
                     </div>
                     <div className='flex spaceard tran_type'>
                         <div className="selected " style={{left:seltype+'%'}} ></div>
-                        <a className='tran_tab' onClick={expense} >Expense</a>
-                        <a className='tran_tab' onClick={income} >Income</a>
+                        <button type="button" className='tran_tab' onClick={expense} >Expense</button>
+                        <button type="button" className='tran_tab' onClick={income} >Income</button>
                     </div>
                     <div className="tran_date margin_1-0 fs12 flex ai_center spaceeve">
                         <p className='tran_date_p'>Date:</p>
@@ -604,7 +440,7 @@ const Home = () => {
                     </div>
                     <div className="tran_amount margin_1-0 fs12 flex ai ai_center spaceeve">
                         <p className='tran_p'>Amount:</p>
-                        <input className='octype tran_am_inp' required type="money" value={enteredAmount} onChange={amountChangeHandler} placeholder='₹0.00'/>
+                        <input className='octype tran_am_inp' required type="number" value={enteredAmount} onChange={amountChangeHandler} placeholder='₹0.00'/>
                     </div>
                     <div className={`${isVisiblecati ? '' : 'hide'}`}>
                     <div className="tran_cat margin_1-0 fs12 flex ai_centers spaceeve">
