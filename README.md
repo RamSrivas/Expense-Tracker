@@ -25,7 +25,7 @@ All calculations and logic are handled on the client side.
 ## 🛠 Tech Stack
 
 - React.js
-- JavaScript (ES6+)
+- JavaScript 
 - HTML5
 - CSS3
 
