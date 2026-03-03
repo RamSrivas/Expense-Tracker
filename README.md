@@ -1,9 +1,7 @@
 # 💰 Smart Expense Tracker (React)
-
 A client-side expense tracking web application built with React that helps users monitor spending, categorize expenses, and stay within budget — all without a backend.
 
 ## 🚀 Features
-
 - Add and delete expenses
 - Categorize expenses (Food, Travel, Utilities, etc.)
 - Sort expenses by date and category
@@ -12,7 +10,6 @@ A client-side expense tracking web application built with React that helps users
 - Fully responsive design
 
 ## 🧠 How It Works
-
 The application uses React state management to:
 - Store expense data locally
 - Dynamically filter and sort expenses
@@ -23,14 +20,12 @@ The application uses React state management to:
 All calculations and logic are handled on the client side.
 
 ## 🛠 Tech Stack
-
 - React.js
 - JavaScript 
 - HTML5
 - CSS3
 
 ## 📊 Key Concepts Implemented
-
 - Component-based architecture
 - State management using React hooks
 - Array filtering, sorting, and aggregation
@@ -38,7 +33,6 @@ All calculations and logic are handled on the client side.
 - Responsive UI design
 
 ## 🎯 Purpose
-
 Built to practice frontend data modeling, client-side logic, and real-time state-driven UI updates without backend dependency.
 
 ---
